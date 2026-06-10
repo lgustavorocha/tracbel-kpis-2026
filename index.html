@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo Tracbel · Painel de KPIs FY2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0d1422;
+  --s1:#111b2d;
+  --s2:#1a2840;
+  --s3:#243350;
+  --border:#2d4060;
+  --text:#dce8f5;
+  --muted:#7a9abf;
+  --green:#22c55e;
+  --yellow:#f59e0b;
+  --red:#ef4444;
+  --agro:#2e8b57;
+  --agro-light:#4ade80;
+  --vce:#0066b2;
+  --vce-light:#60a5fa;
+  --ne:#1d3557;
+  --ne-light:#60a5fa;
+  --no:#1e3a5f;
+  --no-light:#93c5fd;
+  --fl:#6b4c35;
+  --fl-light:#f59e0b;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0a1628 0%,#1a2840 100%);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-brand{display:flex;align-items:center;gap:16px}
+.brand-logo{width:48px;height:48px;background:linear-gradient(135deg,#1d4ed8,#0ea5e9);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff;letter-spacing:-1px}
+.brand-title{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.brand-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.header-meta{text-align:right}
+.header-meta .badge{background:var(--s3);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:12px;color:var(--muted)}
+.header-meta .badge span{color:var(--text);font-weight:600}
+
+/* TABS */
+.tabs-wrapper{background:var(--s1);border-bottom:1px solid var(--border);padding:0 32px;overflow-x:auto;white-space:nowrap}
+.tabs{display:inline-flex;gap:0}
+.tab-btn{padding:14px 20px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:3px solid transparent;transition:all 0.2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:#fff;font-weight:700}
+.tab-btn[data-tab="overview"].active{border-color:#60a5fa}
+.tab-btn[data-tab="agro"].active{border-color:var(--agro)}
+.tab-btn[data-tab="vce"].active{border-color:var(--vce-light)}
+.tab-btn[data-tab="ne"].active{border-color:var(--ne-light)}
+.tab-btn[data-tab="no"].active{border-color:var(--no-light)}
+
+/* CONTENT */
+.content{padding:28px 32px;max-width:1400px;margin:0 auto}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* SECTION */
+.section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-title .dot{width:8px;height:8px;border-radius:50%}
+.section{margin-bottom:32px}
+
+/* COMPANY HEADER STRIPE */
+.company-header{border-radius:var(--radius);padding:24px 28px;margin-bottom:28px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.company-header.agro{background:linear-gradient(135deg,#0d2317 0%,#163b24 100%);border:1px solid #2e8b5740}
+.company-header.vce{background:linear-gradient(135deg,#0a1e35 0%,#0f2e52 100%);border:1px solid #0066b240}
+.company-header.ne{background:linear-gradient(135deg,#0d1b2e 0%,#122540 100%);border:1px solid #1d355740}
+.company-header.no{background:linear-gradient(135deg,#0d1b30 0%,#0f2545 100%);border:1px solid #1e3a5f40}
+.ch-left h2{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+.ch-left p{font-size:13px;color:var(--muted);margin-top:4px}
+.ch-stats{display:flex;gap:24px;flex-wrap:wrap}
+.ch-stat{text-align:right}
+.ch-stat .val{font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.ch-stat .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+@media(max-width:1100px){.grid-5{grid-template-columns:repeat(3,1fr)}.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.grid-3,.grid-4,.grid-5{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.ch-stats{flex-direction:column;align-items:flex-start}.ch-stat{text-align:left}.content{padding:20px 16px}}
+
+/* KPI CARD */
+.kpi-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.kpi-card .kpi-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.kpi-card .kpi-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
+.kpi-card .kpi-main{font-size:26px;font-weight:700;letter-spacing:-0.5px}
+.kpi-card .kpi-sub{font-size:12px;color:var(--muted);text-align:right}
+.kpi-card .kpi-ref{font-size:11px;color:var(--muted);margin-bottom:6px}
+.kpi-card .kpi-delta{font-size:12px;font-weight:600}
+.kpi-delta.up{color:var(--green)}
+.kpi-delta.neutral{color:var(--yellow)}
+.kpi-delta.down{color:var(--red)}
+
+/* PROGRESS BAR */
+.progress-wrap{margin-top:8px}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
+.progress-track{background:var(--s3);border-radius:20px;height:7px;overflow:hidden}
+.progress-fill{height:100%;border-radius:20px;transition:width 0.8s ease}
+.fill-green{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.fill-yellow{background:linear-gradient(90deg,#d97706,#f59e0b)}
+.fill-red{background:linear-gradient(90deg,#b91c1c,#ef4444)}
+.fill-agro{background:linear-gradient(90deg,#166534,#22c55e)}
+.fill-vce{background:linear-gradient(90deg,#1d4ed8,#60a5fa)}
+.fill-ne{background:linear-gradient(90deg,#1d3557,#60a5fa)}
+.fill-no{background:linear-gradient(90deg,#1e3a5f,#93c5fd)}
+
+/* BIG METRIC CARD */
+.big-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;flex-direction:column;gap:16px}
+.big-card-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.metric-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.metric-row:last-child{border-bottom:none}
+.metric-name{font-size:13px;color:var(--text)}
+.metric-values{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.metric-ref{font-size:12px;color:var(--muted)}
+.metric-target{font-size:13px;font-weight:700}
+.metric-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.tag-green{background:#16a34a22;color:#4ade80}
+.tag-yellow{background:#d9770622;color:#fbbf24}
+.tag-red{background:#b91c1c22;color:#f87171}
+.tag-blue{background:#1d4ed822;color:#93c5fd}
+.tag-neutral{background:#1e2d4220;color:var(--muted)}
+
+/* CHART CONTAINER */
+.chart-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.chart-card-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.chart-wrap{position:relative;height:240px}
+.chart-wrap.tall{height:300px}
+
+/* OVERVIEW CARDS */
+.overview-company-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:all 0.2s}
+.overview-company-card:hover{border-color:#60a5fa;transform:translateY(-2px)}
+.occ-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.occ-dot{width:12px;height:12px;border-radius:50%}
+.occ-name{font-size:15px;font-weight:700}
+.occ-segment{font-size:11px;color:var(--muted);margin-top:2px}
+.occ-revenue{font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:4px}
+.occ-label{font-size:11px;color:var(--muted)}
+.occ-divider{height:1px;background:var(--border);margin:14px 0}
+.occ-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.occ-stat-val{font-size:16px;font-weight:700}
+.occ-stat-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* GROUP SUMMARY */
+.group-summary{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.gs-item{text-align:center}
+.gs-val{font-size:32px;font-weight:800;letter-spacing:-1px}
+.gs-lbl{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.gs-divider{width:1px;height:60px;background:var(--border)}
+
+/* INFO BOX */
+.info-box{background:var(--s3);border:1px solid #60a5fa22;border-radius:8px;padding:14px 18px;font-size:12px;color:var(--muted);margin-top:20px}
+.info-box strong{color:var(--text)}
+
+/* TABLE */
+.kpi-table{width:100%;border-collapse:collapse;font-size:13px}
+.kpi-table th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border)}
+.kpi-table td{padding:10px 14px;border-bottom:1px solid var(--s3)}
+.kpi-table tr:last-child td{border-bottom:none}
+.kpi-table tr:hover td{background:var(--s3)}
+.kpi-table .num{text-align:right;font-weight:600}
+.kpi-table .target{color:var(--text);font-weight:700}
+
+/* BADGE STATUS */
+.status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px}
+.status-green{background:#16a34a20;color:#4ade80}
+.status-yellow{background:#d9770620;color:#fbbf24}
+.status-red{background:#b91c1c20;color:#f87171}
+.status-blue{background:#1d4ed820;color:#93c5fd}
+
+/* FLEX ROW */
+.flex-row{display:flex;gap:16px;align-items:stretch}
+.flex-row > *{flex:1 1 0}
+@media(max-width:768px){.flex-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <div class="brand-logo">TB</div>
+    <div>
+      <div class="brand-title">Grupo Tracbel</div>
+      <div class="brand-sub">Painel Estratégico de KPIs · FY2026</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="badge">Referência: <span>Plano Operacional 2026</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">Dados confidenciais · Uso interno</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="overview">Visão Geral</button>
+    <button class="tab-btn" data-tab="agro">🌱 Tracbel Agro</button>
+    <button class="tab-btn" data-tab="vce">🏗️ Tracbel SA</button>
+    <button class="tab-btn" data-tab="ne">🚛 Tracbel NE</button>
+    <button class="tab-btn" data-tab="no">🚛 Tracbel NO</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: VISÃO GERAL -->
+<!-- ============================================================ -->
+<div class="content">
+<div class="tab-panel active" id="panel-overview">
+
+  <div class="group-summary">
+    <div class="gs-item">
+      <div class="gs-val" style="color:#60a5fa">R$ 3,8 B</div>
+      <div class="gs-lbl">Receita Líquida Grupo</div>
+    </div>
+    <div class="gs-divider"></div>
+    <div class="gs-item">
+      <div class="gs-val" style="color:#22c55e">R$ 480 M</div>
+      <div class="gs-lbl">Lucro Bruto Real</div>
+    </div>
+    <div class="gs-divider"></div>
+    <div class="gs-item">
+      <div class="gs-val" style="color:#f59e0b">5</div>
+      <div class="gs-lbl">Empresas</div>
+    </div>
+    <div class="gs-divider"></div>
+    <div class="gs-item">
+      <div class="gs-val" style="color:#a78bfa">3</div>
+      <div class="gs-lbl">Fabricantes</div>
+    </div>
+    <div class="gs-divider"></div>
+    <div class="gs-item">
+      <div class="gs-val" style="color:#fb923c">+17%</div>
+      <div class="gs-lbl">Crescimento Esperado</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Empresas do Grupo</div>
+    <div class="grid-5">
+
+      <div class="overview-company-card" onclick="switchTab('agro')">
+        <div class="occ-top">
+          <div class="occ-dot" style="background:#22c55e"></div>
+          <div>
+            <div class="occ-name">Tracbel Agro</div>
+            <div class="occ-segment">John Deere · Agrícola</div>
+          </div>
+        </div>
+        <div class="occ-revenue" style="color:#22c55e">R$ 1,20 B</div>
+        <div class="occ-label">Receita Líquida PO 2026</div>
+        <div class="occ-divider"></div>
+        <div class="occ-stats">
+          <div>
+            <div class="occ-stat-val">R$ 168M</div>
+            <div class="occ-stat-lbl">Lucro Bruto Real</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">31%</div>
+            <div class="occ-stat-lbl">MS Tratores</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">R$ 392M</div>
+            <div class="occ-stat-lbl">Meta Peças FY26</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">4.797</div>
+            <div class="occ-stat-lbl">Máquinas Conectadas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-company-card" onclick="switchTab('vce')">
+        <div class="occ-top">
+          <div class="occ-dot" style="background:#60a5fa"></div>
+          <div>
+            <div class="occ-name">Tracbel SA</div>
+            <div class="occ-segment">Volvo CE · Construção & Mineração</div>
+          </div>
+        </div>
+        <div class="occ-revenue" style="color:#60a5fa">R$ 1,06 B</div>
+        <div class="occ-label">Receita Líquida PO 2026</div>
+        <div class="occ-divider"></div>
+        <div class="occ-stats">
+          <div>
+            <div class="occ-stat-val">R$ 166M</div>
+            <div class="occ-stat-lbl">Lucro Bruto Real</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">8,33%</div>
+            <div class="occ-stat-lbl">MS GPE 2026</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">R$ 220M</div>
+            <div class="occ-stat-lbl">Vendas Retail Peças</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">71</div>
+            <div class="occ-stat-lbl">NPS Index 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-company-card" onclick="switchTab('ne')">
+        <div class="occ-top">
+          <div class="occ-dot" style="background:#60a5fa"></div>
+          <div>
+            <div class="occ-name">Tracbel NE</div>
+            <div class="occ-segment">Volvo Trucks · Nordeste</div>
+          </div>
+        </div>
+        <div class="occ-revenue" style="color:#60a5fa">R$ 771 M</div>
+        <div class="occ-label">Receita Líquida PO 2026</div>
+        <div class="occ-divider"></div>
+        <div class="occ-stats">
+          <div>
+            <div class="occ-stat-val">R$ 81M</div>
+            <div class="occ-stat-lbl">Lucro Bruto Real</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">626</div>
+            <div class="occ-stat-lbl">HDV Meta 2026</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">R$ 129M</div>
+            <div class="occ-stat-lbl">Meta Peças PV</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">93 pts</div>
+            <div class="occ-stat-lbl">Worthix Caminhões</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-company-card" onclick="switchTab('no')">
+        <div class="occ-top">
+          <div class="occ-dot" style="background:#93c5fd"></div>
+          <div>
+            <div class="occ-name">Tracbel NO</div>
+            <div class="occ-segment">Volvo Trucks · Norte</div>
+          </div>
+        </div>
+        <div class="occ-revenue" style="color:#93c5fd">R$ 558 M</div>
+        <div class="occ-label">Receita Líquida PO 2026</div>
+        <div class="occ-divider"></div>
+        <div class="occ-stats">
+          <div>
+            <div class="occ-stat-val">R$ 63M</div>
+            <div class="occ-stat-lbl">Lucro Bruto Real</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">502</div>
+            <div class="occ-stat-lbl">HDV Meta 2026</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">R$ 114M</div>
+            <div class="occ-stat-lbl">Meta Peças PV</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">93 pts</div>
+            <div class="occ-stat-lbl">Worthix Caminhões</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-company-card">
+        <div class="occ-top">
+          <div class="occ-dot" style="background:#f59e0b"></div>
+          <div>
+            <div class="occ-name">FL &amp; LOG</div>
+            <div class="occ-segment">Florestal &amp; Logística</div>
+          </div>
+        </div>
+        <div class="occ-revenue" style="color:#f59e0b">R$ 231 M</div>
+        <div class="occ-label">Receita Líquida PO 2026</div>
+        <div class="occ-divider"></div>
+        <div class="occ-stats">
+          <div>
+            <div class="occ-stat-val">R$ 46M</div>
+            <div class="occ-stat-lbl">Lucro Bruto Real</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">R$ 26M</div>
+            <div class="occ-stat-lbl">EBITDA</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">Florestal</div>
+            <div class="occ-stat-lbl">Principal segmento</div>
+          </div>
+          <div>
+            <div class="occ-stat-val">Portuário</div>
+            <div class="occ-stat-lbl">Segmento estratégico</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="flex-row">
+    <div class="chart-card" style="flex:2">
+      <div class="chart-card-title">Receita Líquida por Empresa · PO 2026 (R$ Milhões)</div>
+      <div class="chart-wrap"><canvas id="chartOverviewRevenue"></canvas></div>
+    </div>
+    <div class="chart-card" style="flex:1">
+      <div class="chart-card-title">Distribuição da Receita do Grupo</div>
+      <div class="chart-wrap"><canvas id="chartOverviewPie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section" style="margin-top:24px">
+    <div class="section-title"><span class="dot" style="background:#f59e0b"></span>Receita Mensal por Empresa · PO 2026</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Evolução Mensal da Receita Líquida (R$ Milhões)</div>
+      <div class="chart-wrap tall"><canvas id="chartMonthlyAll"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: TRACBEL AGRO -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-agro">
+  <div class="company-header agro">
+    <div class="ch-left">
+      <h2 style="color:#4ade80">Tracbel Agro</h2>
+      <p>John Deere · Plano FY2026 (Nov 2025 – Out 2026)</p>
+    </div>
+    <div class="ch-stats">
+      <div class="ch-stat">
+        <div class="ch-stat .val" style="font-size:22px;font-weight:700;color:#4ade80">R$ 1,20 B</div>
+        <div class="ch-stat .lbl" style="font-size:11px;color:var(--muted)">Receita Líquida PO</div>
+      </div>
+      <div class="ch-stat">
+        <div class="ch-stat .val" style="font-size:22px;font-weight:700;color:#4ade80">R$ 168 M</div>
+        <div class="ch-stat .lbl" style="font-size:11px;color:var(--muted)">Lucro Bruto Real</div>
+      </div>
+      <div class="ch-stat">
+        <div class="ch-stat .val" style="font-size:22px;font-weight:700">14,0%</div>
+        <div class="ch-stat .lbl" style="font-size:11px;color:var(--muted)">Margem LBR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#4ade80"></span>Market Share · Comercial FY2026</div>
+    <div class="grid-3">
+
+      <div class="kpi-card">
+        <div class="kpi-label">Tratores · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#4ade80">31%</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +2 p.p.</div>
+          </div>
+        </div>
+        <div class="kpi-ref">FY25: 29% (737 unid. acum. ago/25)</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Ref. FY25</span><span>Meta FY26</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:93.5%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Colheitadeiras · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#4ade80">40%</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta neutral">→ Manter</div>
+          </div>
+        </div>
+        <div class="kpi-ref">FY25: 40% (8 unid. acum. ago/25)</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Ref. FY25</span><span>Meta FY26</span></div>
+          <div class="progress-track"><div class="progress-fill fill-yellow" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Colhedora de Cana · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#4ade80">67%</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +2 p.p.</div>
+          </div>
+        </div>
+        <div class="kpi-ref">FY25: 65% (69 unid. acum. ago/25)</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Ref. FY25</span><span>Meta FY26</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:97%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#4ade80"></span>Sistema de Produção · Metas FY2026</div>
+    <div class="grid-4">
+
+      <div class="kpi-card">
+        <div class="kpi-label">Plantadeiras (unidades)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">29</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +123%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: 23 · Acum. ago/25: 13</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>13</span><span>29</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:44.8%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Pulverizadores (unidades)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">22</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +267%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: 23 · Acum. ago/25: 6</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>6</span><span>22</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:27.3%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">GreenSystem (unidades)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">66</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ −6%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: 70 · Acum. ago/25: 26</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>26</span><span>66</span></div>
+          <div class="progress-track"><div class="progress-fill fill-yellow" style="width:39.4%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Consórcio</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="font-size:20px">R$ 120M</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +15,8%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: R$ 103,6M · Ago/25: R$ 94,1M</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>R$ 94M</span><span>R$ 120M</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:78.5%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#4ade80"></span>Pós-Vendas · Metas FY2026</div>
+    <div class="flex-row">
+      <div class="big-card">
+        <div class="big-card-title">Receita Líquida · Pós-Vendas</div>
+        <div class="metric-row">
+          <div class="metric-name">Peças (Retail BRL)</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: R$ 341M</div>
+            <div class="metric-target" style="color:#4ade80">R$ 392M</div>
+            <div class="metric-tag tag-green">+15%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Serviços</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: R$ 60M</div>
+            <div class="metric-target" style="color:#4ade80">R$ 69M</div>
+            <div class="metric-tag tag-green">+15%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Pneus</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: R$ 16M</div>
+            <div class="metric-target" style="color:#4ade80">R$ 17,6M</div>
+            <div class="metric-tag tag-green">+9%</div>
+          </div>
+        </div>
+        <div class="metric-row" style="background:var(--s3);margin:0 -20px;padding:10px 20px;border-radius:6px">
+          <div class="metric-name" style="font-weight:700">Total Pós-Vendas</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: R$ 417M</div>
+            <div class="metric-target" style="color:#4ade80;font-size:16px">R$ 478M</div>
+            <div class="metric-tag tag-green">+14,6%</div>
+          </div>
+        </div>
+      </div>
+      <div class="big-card">
+        <div class="big-card-title">KPIs de Performance · Pós-Vendas</div>
+        <div class="metric-row">
+          <div class="metric-name">Crescimento Retail Peças (BRL)</div>
+          <div class="metric-values">
+            <div class="metric-target">+15%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Crescimento Retail em Volume</div>
+          <div class="metric-values">
+            <div class="metric-target">+12%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Money Share Peças (mínimo)</div>
+          <div class="metric-values">
+            <div class="metric-target">45%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Crescimento Nº de Técnicos</div>
+          <div class="metric-values">
+            <div class="metric-target">+30%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">% de Serviços via CSC</div>
+          <div class="metric-values">
+            <div class="metric-target">17%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#4ade80"></span>Conectividade · Metas FY2026</div>
+    <div class="grid-3">
+
+      <div class="kpi-card">
+        <div class="kpi-label">Máquinas Conectadas</div>
+        <div class="kpi-row">
+          <div class="kpi-main">4.797</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +40,5%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: 3.415 · Acum. ago/25: 3.872</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>3.415</span><span>4.797</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:71.2%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Hectares Conectados</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="font-size:20px">1.795.279</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +20,1%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: 1.494.939 · Acum. ago/25: 1.494.117</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>1,49M</span><span>1,79M</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:83.2%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Hectares Altamente Engajados</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="font-size:20px">559.363</div>
+          <div class="kpi-sub">
+            <div>Meta FY26</div>
+            <div class="kpi-delta up">▲ +40,5%</div>
+          </div>
+        </div>
+        <div class="kpi-ref">PAN FY25: 398.000 · Acum. ago/25: 412.532</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>398K</span><span>559K</span></div>
+          <div class="progress-track"><div class="progress-fill fill-agro" style="width:73.8%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#4ade80"></span>Treinamento · Metas Educate FY2026 (80% para todos os papéis)</div>
+    <div class="grid-2">
+      <div class="big-card">
+        <div class="big-card-title">Educate N1 · % Concluído (Meta: 80%)</div>
+        <div class="metric-row">
+          <div class="metric-name">Sales Representative</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 58,3%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-yellow">↑ +21,7 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Service Technician</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 84,6%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-green">✓ Atingido</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Managers</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 50,0%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-yellow">↑ +30 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Prts &amp; Svc Sales Rep</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 92,3%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-green">✓ Atingido</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Connected Support Specialist</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 0,0%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-red">↑ Gap 80 p.p.</div>
+          </div>
+        </div>
+      </div>
+      <div class="big-card">
+        <div class="big-card-title">Educate N2 · % Concluído (Meta: 80%)</div>
+        <div class="metric-row">
+          <div class="metric-name">Prts &amp; Svc Sales Rep</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 76,9%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-yellow">↑ +3,1 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Service Technician</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 69,2%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-yellow">↑ +10,8 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Sales Representative</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 50,0%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-yellow">↑ +30 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Technical Communicator</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 100%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-green">✓ Atingido</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Connected Support Specialist</div>
+          <div class="metric-values">
+            <div class="metric-ref">FY25: 0,0%</div>
+            <div class="metric-target">80%</div>
+            <div class="metric-tag tag-red">↑ Gap 80 p.p.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#4ade80"></span>Receita Mensal · Tracbel Agro (PO 2026, R$ Milhões)</div>
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="chartAgroMonthly"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: TRACBEL SA (VCE) -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-vce">
+  <div class="company-header vce">
+    <div class="ch-left">
+      <h2 style="color:#60a5fa">Tracbel SA</h2>
+      <p>Volvo CE · Construção, Mineração &amp; SDLG · PDP Ciclo 2026</p>
+    </div>
+    <div class="ch-stats">
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700;color:#60a5fa">R$ 1,06 B</div>
+        <div style="font-size:11px;color:var(--muted)">Receita Líquida PO</div>
+      </div>
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700;color:#60a5fa">R$ 166 M</div>
+        <div style="font-size:11px;color:var(--muted)">Lucro Bruto Real</div>
+      </div>
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700">15,6%</div>
+        <div style="font-size:11px;color:var(--muted)">Margem LBR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Market Share · Fechamento 2025 vs Meta 2026</div>
+    <div class="grid-4">
+
+      <div class="kpi-card">
+        <div class="kpi-label">GPE Total · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#60a5fa">8,33%</div>
+          <div class="kpi-sub">
+            <div>Objetivo 2026</div>
+            <div class="kpi-delta down">▼ −1,5 p.p.</div>
+          </div>
+        </div>
+        <div class="kpi-ref">2025: 9,8% real · Desafio Volvo: 9,82%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Obj. TB</span><span>Desafio</span></div>
+          <div class="progress-track"><div class="progress-fill fill-vce" style="width:85%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">ART (Articulados) · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#60a5fa">46,15%</div>
+          <div class="kpi-sub">
+            <div>Objetivo 2026</div>
+            <div class="kpi-delta down">▼ vs 54,55% desafio</div>
+          </div>
+        </div>
+        <div class="kpi-ref">2025: 65,9% real · Pressão concorrência</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Obj. TB 46%</span><span>Desafio 55%</span></div>
+          <div class="progress-track"><div class="progress-fill fill-yellow" style="width:84.6%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">WLO (Carregadeiras) · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#60a5fa">8,50%</div>
+          <div class="kpi-sub">
+            <div>Objetivo 2026</div>
+            <div class="kpi-delta up">▲ vs 7,7% 2025</div>
+          </div>
+        </div>
+        <div class="kpi-ref">2025: 7,7% real · Desafio Volvo: 11%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Obj. TB 8,5%</span><span>Desafio 11%</span></div>
+          <div class="progress-track"><div class="progress-fill fill-vce" style="width:77.3%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">EXC (Escavadeiras) · Market Share</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#60a5fa">8,00%</div>
+          <div class="kpi-sub">
+            <div>Objetivo 2026</div>
+            <div class="kpi-delta up">▲ vs 7,4% 2025</div>
+          </div>
+        </div>
+        <div class="kpi-ref">2025: 7,4% real · Desafio Volvo: 8,93%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Obj. TB 8%</span><span>Desafio 8,93%</span></div>
+          <div class="progress-track"><div class="progress-fill fill-vce" style="width:89.6%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Pós-Venda · Metas 2026</div>
+    <div class="flex-row">
+      <div class="big-card">
+        <div class="big-card-title">Venda de Peças 2026</div>
+        <div class="metric-row">
+          <div class="metric-name">Vendas Retail Volvo (BRL)</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: R$ 203M</div>
+            <div class="metric-target" style="color:#60a5fa">R$ 220M</div>
+            <div class="metric-tag tag-blue">+8,4%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Compras Peças Volvo (BRL)</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: R$ 105M</div>
+            <div class="metric-target" style="color:#60a5fa">R$ 112M</div>
+            <div class="metric-tag tag-blue">+6,7%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Penetração RMA em GPE</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: 60%</div>
+            <div class="metric-target">60%</div>
+            <div class="metric-tag tag-neutral">Manter</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Vendas Retail SDLG (BRL)</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: R$ 14,6M</div>
+            <div class="metric-target" style="color:#60a5fa">R$ 14,6M</div>
+            <div class="metric-tag tag-neutral">Manter</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="big-card">
+        <div class="big-card-title">Performance de Serviços 2026</div>
+        <div class="metric-row">
+          <div class="metric-name">Service Penetration</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: 30%</div>
+            <div class="metric-target">30%</div>
+            <div class="metric-tag tag-green">✓</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Taxa Ativação Caretrack</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: 93%</div>
+            <div class="metric-target">90%</div>
+            <div class="metric-tag tag-green">✓ 93% ref.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Taxa de Produtividade</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: 85%</div>
+            <div class="metric-target">85%</div>
+            <div class="metric-tag tag-green">✓</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Taxa de Eficiência</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: 85%</div>
+            <div class="metric-target">90%</div>
+            <div class="metric-tag tag-yellow">↑ +5 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Campanhas Recomendadas</div>
+          <div class="metric-values">
+            <div class="metric-ref">2025: 40%</div>
+            <div class="metric-target">60%</div>
+            <div class="metric-tag tag-yellow">↑ +20 p.p.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Logística de Peças · 2026</div>
+    <div class="grid-4">
+      <div class="kpi-card">
+        <div class="kpi-label">Confirmação MMI Linhas</div>
+        <div class="kpi-row"><div class="kpi-main">90,0%</div><div class="kpi-sub"><span class="kpi-delta up">✓ 91% 2025</span></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Confirmação MMI Valor</div>
+        <div class="kpi-row"><div class="kpi-main">85,0%</div><div class="kpi-sub"><span class="kpi-delta up">✓ 95% 2025</span></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Disponibilidade Service Index</div>
+        <div class="kpi-row"><div class="kpi-main">87,0%</div><div class="kpi-sub"><span class="kpi-delta neutral">→ 2026</span></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pedidos em Emergência</div>
+        <div class="kpi-row"><div class="kpi-main">28,0%</div><div class="kpi-sub"><span class="kpi-delta down">▼ vs 22% desafio</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Satisfação do Cliente &amp; SEP · 2026</div>
+    <div class="grid-3">
+      <div class="kpi-card">
+        <div class="kpi-label">NPS Index 2026</div>
+        <div class="kpi-row">
+          <div class="kpi-main" style="color:#60a5fa;font-size:40px">71</div>
+          <div class="kpi-sub"><div>Meta Desafio Volvo</div><div class="kpi-delta green">= Objetivo</div></div>
+        </div>
+        <div class="kpi-ref">Nível: Bom desempenho</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SEP – Ciclo Ouro (nº filiais)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">4 *</div>
+          <div class="kpi-sub"><div>Meta: 13</div><div class="kpi-delta red">▼ 9 abaixo da meta</div></div>
+        </div>
+        <div class="kpi-ref">*Programa iniciado jul/2025. Meta original 13 filiais</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>4</span><span>13</span></div>
+          <div class="progress-track"><div class="progress-fill fill-red" style="width:30.8%"></div></div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Equipamentos Usados / Máquinas Novas</div>
+        <div class="kpi-row">
+          <div class="kpi-main">10%</div>
+          <div class="kpi-sub"><div>Objetivo 2026</div><div class="kpi-delta yellow">▼ vs 15% desafio</div></div>
+        </div>
+        <div class="kpi-ref">2025: 7% · Excesso oferta usadas no mercado</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Receita Mensal · Tracbel SA (PO 2026, R$ Milhões)</div>
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="chartVceMonthly"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: TRACBEL NE -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-ne">
+  <div class="company-header ne">
+    <div class="ch-left">
+      <h2 style="color:#60a5fa">Tracbel NE</h2>
+      <p>Volvo Trucks &amp; Bus · Região Nordeste · Plano Operacional 2026 · 25 Anos</p>
+    </div>
+    <div class="ch-stats">
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700;color:#60a5fa">R$ 771 M</div>
+        <div style="font-size:11px;color:var(--muted)">Receita Líquida PO</div>
+      </div>
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700;color:#60a5fa">R$ 81 M</div>
+        <div style="font-size:11px;color:var(--muted)">Lucro Bruto Real</div>
+      </div>
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700">10,5%</div>
+        <div style="font-size:11px;color:var(--muted)">Margem LBR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Vendas Caminhões Novos 2026</div>
+    <div class="grid-4">
+
+      <div class="kpi-card">
+        <div class="kpi-label">HDV Total (Linhas F + VM)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">626</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +3,3%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 606 · Carta Desafio: 606</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>606</span><span>626</span></div>
+          <div class="progress-track"><div class="progress-fill fill-ne" style="width:96.8%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Linha VM Total (HDV + MHDV)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">490</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +20,7%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 406 · MS proposto: 20%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>406</span><span>490</span></div>
+          <div class="progress-track"><div class="progress-fill fill-ne" style="width:82.9%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Vocacional Total</div>
+        <div class="kpi-row">
+          <div class="kpi-main">100</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +33,3%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 75 · MS proposto: 21,5%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>75</span><span>100</span></div>
+          <div class="progress-track"><div class="progress-fill fill-ne" style="width:75%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Ônibus HDV Rodoviário</div>
+        <div class="kpi-row">
+          <div class="kpi-main">31</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +3,3%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 30 · MS proposto: 27%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>30</span><span>31</span></div>
+          <div class="progress-track"><div class="progress-fill fill-ne" style="width:96.8%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Seminovos &amp; VFS · 2026</div>
+    <div class="grid-4">
+      <div class="kpi-card">
+        <div class="kpi-label">Volume Seminovos</div>
+        <div class="kpi-row"><div class="kpi-main">130</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +80,6%</div></div></div>
+        <div class="kpi-ref">Est. 2025: 72 un · Carta Desafio: 182 un</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Financiamento Caminhões</div>
+        <div class="kpi-row"><div class="kpi-main">40%</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +1 p.p.</div></div></div>
+        <div class="kpi-ref">Est. 2025: 39%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Consórcio (BRL)</div>
+        <div class="kpi-row"><div class="kpi-main" style="font-size:20px">R$ 90M</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +28,6%</div></div></div>
+        <div class="kpi-ref">Est. 2025: R$ 70M · Carta Desafio: R$ 105M</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Volume Locação</div>
+        <div class="kpi-row"><div class="kpi-main">17</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ vs 0 em 2025</div></div></div>
+        <div class="kpi-ref">Carta Desafio: 17 un</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Pós-Venda · Metas 2026</div>
+    <div class="flex-row">
+      <div class="big-card">
+        <div class="big-card-title">Receita Pós-Venda 2026</div>
+        <div class="metric-row">
+          <div class="metric-name">Peças Caminhões</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: R$ 110M</div>
+            <div class="metric-target" style="color:#60a5fa">R$ 125M</div>
+            <div class="metric-tag tag-blue">+13,6%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Peças Ônibus</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: R$ 3,2M</div>
+            <div class="metric-target" style="color:#60a5fa">R$ 4M</div>
+            <div class="metric-tag tag-blue">+25%</div>
+          </div>
+        </div>
+        <div class="metric-row" style="background:var(--s3);margin:0 -20px;padding:10px 20px">
+          <div class="metric-name" style="font-weight:700">Total Peças</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: R$ 113M</div>
+            <div class="metric-target" style="color:#60a5fa;font-size:16px">R$ 129M</div>
+            <div class="metric-tag tag-blue">+14,2%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Horas Vendidas Oficina</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 52.646 h</div>
+            <div class="metric-target" style="color:#60a5fa">60.543 h</div>
+            <div class="metric-tag tag-blue">+15%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="big-card">
+        <div class="big-card-title">Planos de Serviço &amp; Performance</div>
+        <div class="metric-row">
+          <div class="metric-name">PS Ouro Caminhões</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 33,2%</div>
+            <div class="metric-target">35%</div>
+            <div class="metric-tag tag-blue">↑ +1,8 p.p.</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">PS Azul Renovação</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 65,3%</div>
+            <div class="metric-target">65%</div>
+            <div class="metric-tag tag-green">✓</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">PS Total Caminhões</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 95,2%</div>
+            <div class="metric-target">95%</div>
+            <div class="metric-tag tag-green">✓</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Worthix Caminhões (Geral)</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 94,74</div>
+            <div class="metric-target">93 pts</div>
+            <div class="metric-tag tag-green">✓ Acima</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Worthix Ônibus (Serviços)</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 96,7</div>
+            <div class="metric-target">92 pts</div>
+            <div class="metric-tag tag-green">✓ Acima</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Desenvolvimento de Rede · 2026</div>
+    <div class="big-card">
+      <div class="big-card-title">Expansão de Filiais (NE) com início até Dez/2027</div>
+      <table class="kpi-table">
+        <thead><tr><th>Localização</th><th>Tipo</th><th>Investimento</th><th>Início Obra</th><th>Início Operação</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Teresina–PI</td><td>Mudança (M)</td><td class="num">R$ 30M</td><td>Q1 2028</td><td>Q1 2029</td><td><span class="status status-green">Terreno OK</span></td></tr>
+          <tr><td>Balsas–MA</td><td>Mudança (M)</td><td class="num">R$ 20M</td><td>Q1 2028</td><td>Q1 2029</td><td><span class="status status-green">Terreno OK</span></td></tr>
+          <tr><td>Juazeiro–CE</td><td>Nova (N)</td><td class="num">R$ 3M</td><td>Q3 2027</td><td>Q1 2028</td><td><span class="status status-yellow">Buscando local</span></td></tr>
+          <tr><td>Pecém–CE</td><td>Nova (N)</td><td class="num">R$ 3M</td><td>Q3 2027</td><td>Q1 2028</td><td><span class="status status-yellow">Buscando local</span></td></tr>
+          <tr><td>Fortaleza–CE</td><td>Nova (N)</td><td class="num">R$ 3M</td><td>Q1 2026</td><td>Q1 2026</td><td><span class="status status-blue">In-company</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#60a5fa"></span>Receita Mensal · Tracbel NE (PO 2026, R$ Milhões)</div>
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="chartNeMonthly"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: TRACBEL NO -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-no">
+  <div class="company-header no">
+    <div class="ch-left">
+      <h2 style="color:#93c5fd">Tracbel NO</h2>
+      <p>Volvo Trucks &amp; Bus · Região Norte · Plano Operacional 2026 · 25 Anos</p>
+    </div>
+    <div class="ch-stats">
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700;color:#93c5fd">R$ 558 M</div>
+        <div style="font-size:11px;color:var(--muted)">Receita Líquida PO</div>
+      </div>
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700;color:#93c5fd">R$ 63 M</div>
+        <div style="font-size:11px;color:var(--muted)">Lucro Bruto Real</div>
+      </div>
+      <div class="ch-stat">
+        <div style="font-size:22px;font-weight:700">11,3%</div>
+        <div style="font-size:11px;color:var(--muted)">Margem LBR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#93c5fd"></span>Vendas Caminhões Novos 2026</div>
+    <div class="grid-4">
+
+      <div class="kpi-card">
+        <div class="kpi-label">HDV Total (F + VM HDV)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">502</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +11%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 452 · MS: 29,6%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>452</span><span>502</span></div>
+          <div class="progress-track"><div class="progress-fill fill-no" style="width:90%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Linha VM Total (HDV + MHDV)</div>
+        <div class="kpi-row">
+          <div class="kpi-main">377</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +14,6%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 329 · MS: 23,1%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>329</span><span>377</span></div>
+          <div class="progress-track"><div class="progress-fill fill-no" style="width:87.3%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Vocacional Total</div>
+        <div class="kpi-row">
+          <div class="kpi-main">254</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +15,5%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 220 · MS: 30,1%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>220</span><span>254</span></div>
+          <div class="progress-track"><div class="progress-fill fill-no" style="width:86.6%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Ônibus HDV Rodoviário</div>
+        <div class="kpi-row">
+          <div class="kpi-main">20</div>
+          <div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +11,1%</div></div>
+        </div>
+        <div class="kpi-ref">Est. 2025: 18 · MS: 40%</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>18</span><span>20</span></div>
+          <div class="progress-track"><div class="progress-fill fill-no" style="width:90%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#93c5fd"></span>Seminovos &amp; VFS · 2026</div>
+    <div class="grid-4">
+      <div class="kpi-card">
+        <div class="kpi-label">Volume Seminovos</div>
+        <div class="kpi-row"><div class="kpi-main">100</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +203%</div></div></div>
+        <div class="kpi-ref">Est. 2025: 33 un · Carta Desafio: 135 un</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Financiamento Caminhões</div>
+        <div class="kpi-row"><div class="kpi-main">40%</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta down">▼ vs 48% 2025</div></div></div>
+        <div class="kpi-ref">Est. 2025: 48% · Carta Desafio: 40%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Consórcio (BRL)</div>
+        <div class="kpi-row"><div class="kpi-main" style="font-size:20px">R$ 75M</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +25%</div></div></div>
+        <div class="kpi-ref">Est. 2025: R$ 60M · Carta Desafio: R$ 90M</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Seguros (MBRL)</div>
+        <div class="kpi-row"><div class="kpi-main">R$ 5M</div><div class="kpi-sub"><div>Meta 2026</div><div class="kpi-delta up">▲ +4,2%</div></div></div>
+        <div class="kpi-ref">Est. 2025: R$ 4,8M</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#93c5fd"></span>Pós-Venda · Metas 2026</div>
+    <div class="flex-row">
+      <div class="big-card">
+        <div class="big-card-title">Receita Pós-Venda 2026</div>
+        <div class="metric-row">
+          <div class="metric-name">Peças Caminhões</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: R$ 94,7M</div>
+            <div class="metric-target" style="color:#93c5fd">R$ 108M</div>
+            <div class="metric-tag tag-blue">+14%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Peças Ônibus</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: R$ 6,3M</div>
+            <div class="metric-target" style="color:#93c5fd">R$ 6,5M</div>
+            <div class="metric-tag tag-blue">+3,2%</div>
+          </div>
+        </div>
+        <div class="metric-row" style="background:var(--s3);margin:0 -20px;padding:10px 20px">
+          <div class="metric-name" style="font-weight:700">Total Peças</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: R$ 101M</div>
+            <div class="metric-target" style="color:#93c5fd;font-size:16px">R$ 114,5M</div>
+            <div class="metric-tag tag-blue">+13,4%</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Horas Vendidas Oficina</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 57.148 h</div>
+            <div class="metric-target" style="color:#93c5fd">65.721 h</div>
+            <div class="metric-tag tag-blue">+15%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="big-card">
+        <div class="big-card-title">Planos de Serviço &amp; Performance</div>
+        <div class="metric-row">
+          <div class="metric-name">PS Ouro Caminhões</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 41,3%</div>
+            <div class="metric-target">35%</div>
+            <div class="metric-tag tag-green">✓ Acima</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">PS Azul Renovação</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 74,6%</div>
+            <div class="metric-target">65%</div>
+            <div class="metric-tag tag-green">✓ Acima</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">PS Total Caminhões</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 105,9%</div>
+            <div class="metric-target">95%</div>
+            <div class="metric-tag tag-green">✓ Acima</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Worthix Caminhões (Geral)</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 94,5</div>
+            <div class="metric-target">93 pts</div>
+            <div class="metric-tag tag-green">✓ Acima</div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Worthix Ônibus (Serviços)</div>
+          <div class="metric-values">
+            <div class="metric-ref">Est. 2025: 91,2</div>
+            <div class="metric-target">92 pts</div>
+            <div class="metric-tag tag-yellow">↑ +0,8 p.p.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#93c5fd"></span>Desenvolvimento de Rede · 2026</div>
+    <div class="big-card">
+      <div class="big-card-title">Expansão de Filiais (NO) com início até Dez/2027</div>
+      <table class="kpi-table">
+        <thead><tr><th>Localização</th><th>Tipo</th><th>Investimento</th><th>Início Obra</th><th>Início Operação</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Boa Vista–RR</td><td>Nova (N)</td><td class="num">R$ 3M</td><td>Q3 2027</td><td>Q1 2028</td><td><span class="status status-yellow">Buscando local</span></td></tr>
+          <tr><td>Parauapebas–PA</td><td>Nova (N)</td><td class="num">R$ 3M</td><td>Q3 2027</td><td>Q1 2028</td><td><span class="status status-yellow">Buscando local</span></td></tr>
+          <tr><td>Tucumã–PA</td><td>Nova (N)</td><td class="num">R$ 5M</td><td>Q4 2025</td><td>Q1 2025</td><td><span class="status status-blue">Loja in-company Vale</span></td></tr>
+          <tr><td>Paragominas–PA</td><td>Reforma (R)</td><td class="num">R$ 2M</td><td>Q4 2025</td><td>Q1 2026</td><td><span class="status status-green">Em andamento</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="dot" style="background:#93c5fd"></span>Receita Mensal · Tracbel NO (PO 2026, R$ Milhões)</div>
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="chartNoMonthly"></canvas></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /content -->
+
+<script>
+// ===== TAB NAVIGATION =====
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const btn = document.querySelector('[data-tab="'+name+'"]');
+  const panel = document.getElementById('panel-'+name);
+  if(btn) btn.classList.add('active');
+  if(panel) panel.classList.add('active');
+  lazyInitCharts(name);
+}
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+// ===== CHART DATA =====
+const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+const dataAgro    = [102.1,88.4,134.5,167.1,152.0,100.4,85.6,91.6,85.0,92.6,57.4,49.8];
+const dataNe      = [37.6,44.2,55.0,57.3,59.2,58.5,69.2,70.4,73.8,81.8,84.8,79.8];
+const dataNo      = [26.9,31.7,33.1,46.3,47.7,47.5,45.0,46.9,57.4,58.2,62.9,55.2];
+const dataVce     = [64.5,71.9,81.7,84.0,94.2,89.5,98.2,98.1,99.9,100.3,89.1,92.0];
+const dataFl      = [9.9,9.7,19.4,20.4,27.6,18.0,20.0,23.3,30.7,20.9,19.8,11.1];
+
+const totals = {
+  agro: dataAgro.reduce((a,b)=>a+b,0).toFixed(1),
+  ne:   dataNe.reduce((a,b)=>a+b,0).toFixed(1),
+  no:   dataNo.reduce((a,b)=>a+b,0).toFixed(1),
+  vce:  dataVce.reduce((a,b)=>a+b,0).toFixed(1),
+  fl:   dataFl.reduce((a,b)=>a+b,0).toFixed(1)
+};
+
+const chartDefaults = {
+  responsive:true,
+  maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#8ea7c5',font:{size:11}}}},
+  scales:{
+    x:{ticks:{color:'#8ea7c5',font:{size:11}},grid:{color:'#2d406040'}},
+    y:{ticks:{color:'#8ea7c5',font:{size:11}},grid:{color:'#2d406060'}}
+  }
+};
+
+let chartsInited = {};
+
+function lazyInitCharts(tab) {
+  if(chartsInited[tab]) return;
+  chartsInited[tab] = true;
+
+  if(tab === 'overview') {
+    // Bar chart
+    new Chart(document.getElementById('chartOverviewRevenue'), {
+      type:'bar',
+      data:{
+        labels:['TB Agro','TB SA (VCE)','TB NE','TB NO','FL & LOG'],
+        datasets:[{
+          label:'Receita Líquida PO 2026 (R$ M)',
+          data:[1202,1063,771,558,231],
+          backgroundColor:['#22c55e80','#60a5fa80','#60a5fa60','#93c5fd60','#f59e0b80'],
+          borderColor:['#22c55e','#60a5fa','#60a5fa','#93c5fd','#f59e0b'],
+          borderWidth:2,borderRadius:6
+        }]
+      },
+      options:{...chartDefaults,plugins:{...chartDefaults.plugins,legend:{display:false}}}
+    });
+    // Pie
+    new Chart(document.getElementById('chartOverviewPie'), {
+      type:'doughnut',
+      data:{
+        labels:['TB Agro','TB SA (VCE)','TB NE','TB NO','FL & LOG'],
+        datasets:[{
+          data:[1202,1063,771,558,231],
+          backgroundColor:['#22c55e','#60a5fa','#3b82f6','#93c5fd','#f59e0b'],
+          borderColor:'#0d1422',borderWidth:3
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{color:'#8ea7c5',font:{size:11},padding:12}}}
+      }
+    });
+    // Monthly all
+    new Chart(document.getElementById('chartMonthlyAll'), {
+      type:'line',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'TB Agro',data:dataAgro,borderColor:'#22c55e',backgroundColor:'#22c55e15',fill:false,tension:0.3,pointRadius:3},
+          {label:'TB SA',data:dataVce,borderColor:'#60a5fa',backgroundColor:'#60a5fa15',fill:false,tension:0.3,pointRadius:3},
+          {label:'TB NE',data:dataNe,borderColor:'#3b82f6',backgroundColor:'#3b82f615',fill:false,tension:0.3,pointRadius:3},
+          {label:'TB NO',data:dataNo,borderColor:'#93c5fd',backgroundColor:'#93c5fd15',fill:false,tension:0.3,pointRadius:3},
+          {label:'FL & LOG',data:dataFl,borderColor:'#f59e0b',backgroundColor:'#f59e0b15',fill:false,tension:0.3,pointRadius:3}
+        ]
+      },
+      options:{...chartDefaults,plugins:{...chartDefaults.plugins,legend:{labels:{color:'#8ea7c5',font:{size:11}}}}}
+    });
+  }
+
+  if(tab === 'agro') {
+    new Chart(document.getElementById('chartAgroMonthly'), {
+      type:'bar',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Agrícola',data:[69.9,52.9,93.5,123.5,108.9,56.0,38.1,45.0,39.0,40.8,21.0,20.5],backgroundColor:'#22c55e80',borderColor:'#22c55e',borderWidth:1,borderRadius:4},
+          {label:'Peças',data:[25.2,27.2,32.1,32.3,33.9,35.2,36.6,35.0,35.4,37.0,28.6,23.5],backgroundColor:'#f59e0b60',borderColor:'#f59e0b',borderWidth:1,borderRadius:4},
+          {label:'Serviços',data:[4.5,5.0,4.8,5.8,5.7,6.2,6.4,6.9,6.1,7.1,5.1,3.6],backgroundColor:'#60a5fa60',borderColor:'#60a5fa',borderWidth:1,borderRadius:4}
+        ]
+      },
+      options:{...chartDefaults,scales:{...chartDefaults.scales,x:{...chartDefaults.scales.x,stacked:true},y:{...chartDefaults.scales.y,stacked:true}},plugins:{...chartDefaults.plugins}}
+    });
+  }
+
+  if(tab === 'vce') {
+    new Chart(document.getElementById('chartVceMonthly'), {
+      type:'bar',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Construção & Min.',data:[40.2,46.3,53.5,55.1,63.5,59.4,65.5,67.2,68.5,69.3,60.0,64.5],backgroundColor:'#60a5fa80',borderColor:'#60a5fa',borderWidth:1,borderRadius:4},
+          {label:'Peças',data:[17.4,17.4,19.7,20.4,21.6,21.4,22.6,21.4,22.6,22.1,19.7,19.7],backgroundColor:'#f59e0b60',borderColor:'#f59e0b',borderWidth:1,borderRadius:4},
+          {label:'Serviços',data:[3.1,3.0,3.3,3.5,3.6,3.5,4.0,4.0,4.0,3.8,3.6,3.6],backgroundColor:'#22c55e60',borderColor:'#22c55e',borderWidth:1,borderRadius:4}
+        ]
+      },
+      options:{...chartDefaults,scales:{...chartDefaults.scales,x:{...chartDefaults.scales.x,stacked:true},y:{...chartDefaults.scales.y,stacked:true}}}
+    });
+  }
+
+  if(tab === 'ne') {
+    new Chart(document.getElementById('chartNeMonthly'), {
+      type:'bar',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Caminhões',data:[26.4,32.8,39.0,40.3,41.5,41.7,49.4,50.2,53.9,60.7,68.5,66.1],backgroundColor:'#60a5fa80',borderColor:'#60a5fa',borderWidth:1,borderRadius:4},
+          {label:'Peças',data:[8.6,8.1,8.3,9.0,9.6,10.1,11.1,11.3,10.8,11.9,9.6,9.3],backgroundColor:'#f59e0b60',borderColor:'#f59e0b',borderWidth:1,borderRadius:4},
+          {label:'Serviços',data:[1.5,1.4,1.4,1.6,1.8,1.7,1.8,1.9,1.8,1.9,1.6,1.5],backgroundColor:'#22c55e60',borderColor:'#22c55e',borderWidth:1,borderRadius:4},
+          {label:'Ônibus',data:[0,0,2.9,2.9,2.9,1.4,2.2,2.9,2.9,2.9,1.4,0],backgroundColor:'#a78bfa60',borderColor:'#a78bfa',borderWidth:1,borderRadius:4}
+        ]
+      },
+      options:{...chartDefaults,scales:{...chartDefaults.scales,x:{...chartDefaults.scales.x,stacked:true},y:{...chartDefaults.scales.y,stacked:true}}}
+    });
+  }
+
+  if(tab === 'no') {
+    new Chart(document.getElementById('chartNoMonthly'), {
+      type:'bar',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Caminhões',data:[18.4,19.9,20.0,32.7,33.9,33.4,29.1,31.6,40.6,41.7,47.9,44.2],backgroundColor:'#93c5fd80',borderColor:'#93c5fd',borderWidth:1,borderRadius:4},
+          {label:'Peças',data:[6.6,8.3,8.8,8.7,8.8,8.4,9.2,8.7,10.0,10.1,8.3,8.8],backgroundColor:'#f59e0b60',borderColor:'#f59e0b',borderWidth:1,borderRadius:4},
+          {label:'Serviços',data:[1.2,1.2,1.3,1.4,1.5,1.2,1.4,1.3,1.6,1.4,1.4,1.2],backgroundColor:'#22c55e60',borderColor:'#22c55e',borderWidth:1,borderRadius:4},
+          {label:'Ônibus',data:[0,1.6,1.6,1.6,1.6,1.6,1.6,1.6,1.6,1.6,1.6,0],backgroundColor:'#a78bfa60',borderColor:'#a78bfa',borderWidth:1,borderRadius:4}
+        ]
+      },
+      options:{...chartDefaults,scales:{...chartDefaults.scales,x:{...chartDefaults.scales.x,stacked:true},y:{...chartDefaults.scales.y,stacked:true}}}
+    });
+  }
+}
+
+// Init overview on load
+lazyInitCharts('overview');
+</script>
+</body>
+</html>
